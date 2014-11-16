@@ -17,7 +17,7 @@ if [ -f downloader.sh ]
 then
 	mv downloader.sh /usr/bin/downloader
 else
-	# todo add here
+	curl -sS https://raw.githubusercontent.com/znck/downloader/master/downloader.sh >> /usr/bin/downloader
 fi
 chmod +x /usr/bin/downloader
 
