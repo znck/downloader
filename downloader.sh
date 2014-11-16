@@ -19,7 +19,7 @@ if [ ! "$1" ];then
   usage
 fi
  
-SPLITSIZE=${2:-128}
+SPLITSIZE=${2:-${downloader_chunk_size:-128}}
 SPLITSIZE=$(($SPLITSIZE * 1024 * 1024))
 
 URL=$1
@@ -61,7 +61,12 @@ esac
  
 #Invoke curls
 for PART in `eval echo {1..$SPLITNUM}`;do
-  curl --ftp-pasv -o "/tmp/$FILENAME.$PART" --range $START-$END --proxy $proxy $URL 2> /dev/null &
+  if $proxy
+  then
+    curl --ftp-pasv -o "/tmp/$FILENAME.$PART" --range $START-$END --proxy $proxy $URL 2> /dev/null &
+  else
+    curl --ftp-pasv -o "/tmp/$FILENAME.$PART" --range $START-$END $URL 2> /dev/null &
+  fi
   START=$(($START+$CHUNK+1))
   END=$(($START+$CHUNK))
 done
