@@ -61,12 +61,7 @@ esac
  
 #Invoke curls
 for PART in `eval echo {1..$SPLITNUM}`;do
-  if $proxy
-  then
-    curl --ftp-pasv -o "/tmp/$FILENAME.$PART" --range $START-$END --proxy $proxy $URL 2> /dev/null &
-  else
-    curl --ftp-pasv -o "/tmp/$FILENAME.$PART" --range $START-$END $URL 2> /dev/null &
-  fi
+  curl --ftp-pasv -o "/tmp/$FILENAME.$PART" --range $START-$END $URL 2> /dev/null &
   START=$(($START+$CHUNK+1))
   END=$(($START+$CHUNK))
 done
