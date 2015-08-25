@@ -1,17 +1,16 @@
-Downloader
-==========
+# Downloader [![GitHub version](https://badge.fury.io/gh/znck%2Fdownloader.svg)](http://badge.fury.io/gh/znck%2Fdownloader)
 
 A simple downloader to download large files.
 
 
-## Install Downloader
+## How to install?
 
 Run this in your terminal to get the latest Downloader version:
 ```bash
 curl -sS https://raw.githubusercontent.com/znck/downloader/master/install.sh | sudo bash
 ```
 
-## How to use
+## How to use?
 
 Downloader has simple commandline interface.
 
