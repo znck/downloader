@@ -7,7 +7,7 @@ A simple downloader to download large files.
 
 Run this in your terminal to get the latest Downloader version:
 ```bash
-curl -sS https://raw.githubusercontent.com/znck/downloader/master/install.sh | sudo bash
+curl -sS https://raw.githubusercontent.com/znck/downloader/master/install.sh | sudo -E bash
 ```
 
 ## How to use?
