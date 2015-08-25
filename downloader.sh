@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function usage {
-  echo -e "Usage:\n\t`basename $0` <url> [split size (dafault: 128mb)]"
+  echo -e "Usage:\n\t`basename $0` <url> [chunk size (default: 128mb)]"
   exit 1
 }
  
@@ -14,9 +14,18 @@ function clean {
 }
  
 #Check parameters
-if [ ! "$1" ];then
+if [ ! "$1" ] ; then
   echo "Where's the URL?"
   usage
+fi
+
+if [ "$2" ] ; then
+    if [[ $2 =~ ^[0-9]+$ ]] ; then
+        echo "setting chunk size: {$2}..."
+    else
+        echo "Chunk size should be a number. Its best to use maximum download limit as chunk size."
+        usage
+    fi
 fi
  
 SPLITSIZE=${2:-${downloader_chunk_size:-128}}
@@ -39,9 +48,6 @@ END=$CHUNK
 
 OUT_DIR=${downloader_output_dir:-$HOME/Downloads}
 
-# proxy
-proxy=${http_proxy:-$HTTP_PROXY}
- 
 #Trap ctrl-c
 trap 'clean' SIGINT SIGTERM
  
@@ -80,19 +86,20 @@ function calc {
 }
 
 #Wait for all parts to complete while spewing progress
-while jobs | grep -q Running;do
+while jobs | grep -q Running ; do
  calc
  echo -n "Downloading $FILENAME in $SPLITNUM parts: $(($GOTSIZE/1048576)) / $(($SIZE/1048576)) mb @ $(($RATE)) kb/s ($PCT%).    "
  tput ech ${#SIZE}
  tput cub 1000
  sleep 1
 done
+
 calc
 echo "Downloading $FILENAME in $SPLITNUM parts: $(($GOTSIZE/1048576)) / $(($SIZE/1048576)) mb @ $(($RATE)) kb/s ($PCT%).    "
 
 #Check if file name exists
 FILENAME2=$FILENAME
-if([ -f "$OUT_DIR/$FILENAME2" ]) then
+if [ -f "$OUT_DIR/$FILENAME2" ] ; then
   read -p "$FILENAME2 already exists in $OUT_DIR. Do you want to overwrite? [n/y] " opt
   case $opt in
     [Yy]* ) break;;
