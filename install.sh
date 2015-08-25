@@ -10,6 +10,7 @@ then
 	echo "" &>/dev/null
 else
 	echo "Please install 'curl' to use downloader."
+    apt-get install curl
 	exit
 fi
 
@@ -21,4 +22,4 @@ else
 fi
 chmod +x /usr/bin/downloader
 
-echo "Usage: downloader <url> [<chunk size>]"
+downloader
