@@ -15,8 +15,8 @@ curl -sS https://raw.githubusercontent.com/znck/downloader/master/install.sh | s
 Downloader has simple commandline interface.
 
 ```bash
-downloader <url> [<chunk size>]
-```	
+downloader <url> [<chunk size>] [<filename>]
+```
 
 Default chunk size is 128mb but you can change it by a line to your `.bashrc` file
 

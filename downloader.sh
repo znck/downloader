@@ -1,18 +1,39 @@
 #!/bin/bash
 
 function usage {
-  echo -e "Usage:\n\t`basename $0` <url> [chunk size (default: 128mb)]"
+  echo -e "Usage:\n\t`basename $0` <url> [chunk size (default: 128mb)] [filename (default: autodetect)]"
   exit 1
 }
- 
+
 #Cleanup on kill
 function clean {
   kill 0
   rm /tmp/$FILENAME.* 2> /dev/null
   echo "Download failed!"
-  exit 1 
+  exit 1
 }
- 
+
+function getUriFilename() {
+    header="$(curl -sI "$1" | tr -d '\r')"
+
+    filename="$(echo "$header" | grep -o -E 'filename=.*$')"
+    if [[ -n "$filename" ]]; then
+        echo "${filename#filename=}"
+        return
+    fi
+
+    filename="$(echo "$header" | grep -o -E 'Location:.*$')"
+    if [[ -n "$filename" ]]; then
+        basename "${filename#Location\:}"
+        return
+    fi
+
+    filename="$(basename $1)"
+
+    echo "${filename%%\?*}"
+    return
+}
+
 #Check parameters
 if [ ! "$1" ] ; then
   echo "Where's the URL?"
@@ -21,22 +42,26 @@ fi
 
 if [ "$2" ] ; then
     if [[ $2 =~ ^[0-9]+$ ]] ; then
-        echo "setting chunk size: {$2}..."
+        echo "Setting chunk size: {$2}..."
     else
         echo "Chunk size should be a number. Its best to use maximum download limit as chunk size."
         usage
     fi
 fi
- 
+
 SPLITSIZE=${2:-${downloader_chunk_size:-128}}
 SPLITSIZE=$(($SPLITSIZE * 1024 * 1024))
 
 URL=$1
 
-FILENAME="`basename $URL`"
+if [ "$3" ] ; then
+  FILENAME=$3
+else
+  FILENAME="$(getUriFilename $URL)"
+fi
 
-SIZE="`curl -qI $URL 2> /dev/null|awk '/Length/ {print $2}'|grep -o '[0-9]*'`"
-SIZE=${SIZE:-1} 
+SIZE="`curl -qIL $URL 2> /dev/null|awk '/Length/ {print $2}'|grep -o '[0-9]*'`"
+SIZE=${SIZE:-1}
 
 SPLITNUM=$((${SIZE:-0}/$SPLITSIZE))
 
@@ -48,9 +73,11 @@ END=$CHUNK
 
 OUT_DIR=${downloader_output_dir:-$HOME/Downloads}
 
+echo "Downloading to: $OUT_DIR {$FILENAME}..."
+
 #Trap ctrl-c
 trap 'clean' SIGINT SIGTERM
- 
+
 #Test splitness
 OUT=`curl -m 2 --range 0-0 $URL 2> /dev/null|while read -n 1 C;do
   OUT="${OUT}½"
@@ -64,14 +91,14 @@ case ${#OUT} in
 1)  ;; #Got a byte
 *)  echo Server does not spit...;SPLITNUM=1;; #Got more than asked for
 esac
- 
+
 #Invoke curls
 for PART in `eval echo {1..$SPLITNUM}`;do
   curl --ftp-pasv -o "/tmp/$FILENAME.$PART" --range $START-$END $URL 2> /dev/null &
   START=$(($START+$CHUNK+1))
   END=$(($START+$CHUNK))
 done
- 
+
 TIME=$((`date +%s`-1))
 function calc {
  GOTSIZE=$((`eval ls -l "/tmp/$FILENAME".{1..$SPLITNUM} 2> /dev/null|awk 'BEGIN{SUM=0}{SUM=SUM+$5}END{print SUM}'`))
