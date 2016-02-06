@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as root"
    exit 1
 fi
 
@@ -16,10 +16,10 @@ fi
 
 if [ -f downloader.sh ]
 then
-	mv downloader.sh /usr/bin/downloader
+	mv downloader.sh /usr/local/bin/downloader
 else
-	curl -sS https://raw.githubusercontent.com/znck/downloader/master/downloader.sh >> /usr/bin/downloader
+	curl -sS https://raw.githubusercontent.com/znck/downloader/master/downloader.sh >> /usr/local/bin/downloader
 fi
-chmod +x /usr/bin/downloader
+chmod +x /usr/local/bin/downloader
 
 downloader
