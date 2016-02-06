@@ -1,4 +1,4 @@
-# Downloader [![GitHub version](https://badge.fury.io/gh/znck%2Fdownloader.svg)](http://badge.fury.io/gh/znck%2Fdownloader)
+# Downloader [![GitHub Version](https://badge.fury.io/gh/znck%2Fdownloader.svg)](http://badge.fury.io/gh/znck%2Fdownloader)
 
 A simple downloader to download large files.
 
