@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function usage {
-  echo -e "Usage:\n\t`basename $0` <url> [chunk size (default: 128mb)] [filename (default: autodetect)]"
+  echo -e "Usage:\n\t`basename $0` <url> [chunk size (default: 128MB)] [filename (default: autodetect)]"
   exit 1
 }
 
@@ -110,14 +110,14 @@ function calc {
 #Wait for all parts to complete while spewing progress
 while jobs | grep -q Running ; do
  calc
- echo -n "Downloading $FILENAME in $SPLITNUM parts: $(($GOTSIZE/1048576)) / $(($SIZE/1048576)) mb @ $(($RATE)) kb/s ($PCT%).    "
+ echo -n "Downloading $FILENAME in $SPLITNUM parts: $(($GOTSIZE/1048576)) / $(($SIZE/1048576)) mb @ $(($RATE)) KB/s ($PCT%).    "
  tput ech ${#SIZE}
  tput cub 1000
  sleep 1
 done
 
 calc
-echo "Downloading $FILENAME in $SPLITNUM parts: $(($GOTSIZE/1048576)) / $(($SIZE/1048576)) mb @ $(($RATE)) kb/s ($PCT%).    "
+echo "Downloading $FILENAME in $SPLITNUM parts: $(($GOTSIZE/1048576)) / $(($SIZE/1048576)) mb @ $(($RATE)) KB/s ($PCT%).    "
 
 #Check if file name exists
 FILENAME2=$FILENAME
